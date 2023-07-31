@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: api
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - ./api:/usr/src/app
+    env_file:
+      - .env
+    # Run a command against the development stage of the image
+    command: npm run start
+    ports:
+      - 3000:3000
+    depends_on:
+      - redis
+  consumer:
+    build:
+      dockerfile: Dockerfile
+      context: consumer
+      # Only will build development stage from our dockerfile
+      target: development
+    volumes:
+      - ./consumer:/usr/src/app
+    env_file:
+      - .env
+    # Run a command against the development stage of the image
+    command: npm run start
+    ports:
+      - 3001:3001
+    depends_on:
+      - redis
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '6379:6379'
